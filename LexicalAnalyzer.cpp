@@ -11,7 +11,6 @@ static string token_names[] = { "IDENT_T","NUMLIT_T","STRLIT_T","LISTOP_T","CONS
                                 "ROUND_T","EQUALTO_T","GT_T","LT_T","GTE_T","LTE_T","LPAREN_T",
                                 "RPAREN_T","SQUOTE_T","ERROR_T","EOF_T" };
 
-// test comment
 LexicalAnalyzer::LexicalAnalyzer (char * filename)
 {
 	// This function will initialize the lexical analyzer class
