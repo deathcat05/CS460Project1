@@ -1,0 +1,1 @@
+car +cadrabc-cons / if*else =and >= => "Hi all" abccadr a_symbol 1 .123 -12.23 caddr? cddddr list? 124. "cadr"
