@@ -141,6 +141,98 @@ int LexicalAnalyzer::nextState (int currentState, char currentChar)
   // set col to appropriate value based on transition matrix
   if (isalpha(currentChar) && currentChar != 'c' && currentChar != 'a' && currentChar != 'd' && currentChar != 'r')
     charColumn = 0;
+  
+  else if (isdigit(currentChar))
+    charColumn = 6;
+
+  else
+    switch (currentChar)
+      {
+      case 'c':
+	charColumn = 1;
+	break;
+	
+      case 'a':
+	charColumn = 2;
+	break;
+	
+      case 'd':
+	charColumn = 3;
+	break;
+	
+      case 'r':
+	charColumn = 4;
+	break;
+
+      case '_':
+	charColumn = 5;
+	break;
+	
+      case '.':
+	charColumn = 7;
+	break;
+	
+      case '+':
+	charColumn = 8;
+	break;
+	
+      case '-':
+	charColumn = 9;
+	break;
+	
+      case '/':
+	charColumn = 10;
+	break;
+
+      case '*':
+	charColumn = 11;
+	break;
+	
+      case '>':
+	charColumn = 12;
+	break;
+      
+      case '=':
+	charColumn = 13;
+	break;
+	
+      case '<':
+	charColumn = 14;
+	break;
+      
+      case '(':
+	charColumn = 15;
+	break;
+	
+      case ')':
+	charColumn = 16;
+	break;
+	
+      case '\'':
+	charColumn = 17;
+	break;
+	
+      case '"':
+	charColumn = 18;
+	break;
+	
+      case ' ':
+	charColumn = 19;
+	break;
+      
+      case '?':
+	charColumn = 20;
+	break;
+
+      case '\0':
+	return BU;
+	
+      default:
+	return ER;
+      }
+
+  // original set of if/else statements
+  /*
   else if (currentChar == 'c')
     charColumn = 1;
   else if (currentChar == 'a')
@@ -185,6 +277,7 @@ int LexicalAnalyzer::nextState (int currentState, char currentChar)
     return BU;
   else
     return ER;
+  */
 
 int states[11][21] = {
 /*      alpha      c        a        d        r        _       #    .       +        -        /        *        >        =         <        (        )        '        "        ws  ?*/
