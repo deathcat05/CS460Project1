@@ -22,7 +22,7 @@ class LexicalAnalyzer
 	string GetLexeme () const;
 	void ReportError (const string & msg);
 	void SetToken();
-	token_type FindKeyWord(string lexeme);
+	void FindKeyWord();
 	//void ValidateIdentifier(string token);
 
 	// functions I added

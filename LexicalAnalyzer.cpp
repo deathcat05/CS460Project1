@@ -27,18 +27,6 @@ LexicalAnalyzer::LexicalAnalyzer (char * filename): input(filename)
 
   pos = 0; // set pos to 0
   lineNum = 0; // set lineNum to 0
-
-=======
-static string token_names[] = {"EOF_T"};
-
-LexicalAnalyzer::LexicalAnalyzer(char *filename)
-{
-	GetInputFile(filename);
-
-	// This function will initialize the lexical analyzer class
-
-	// Transition Table goes here.
->>>>>>> ddcb7d1a9973d963796dd3c13f0252d64dd6e5c4
 }
 
 LexicalAnalyzer::~LexicalAnalyzer()
@@ -98,7 +86,6 @@ void LexicalAnalyzer::ReportError(const string &msg)
 	// This function will be called to write an error message to a file
 }
 
-<<<<<<< HEAD
 string LexicalAnalyzer::getLine ()
 {
   return line;
@@ -356,57 +343,75 @@ string LexicalAnalyzer::category (int catState)
 
 void LexicalAnalyzer::SetToken()
 {
-	string temp; 
-	if(temp == "IDKEY_T")
+ 	int LexLength = lexeme.length(); 
+	if(token == IDKEY)
 	{
-	 	FindKeyWord(temp);
+		if(lexeme[LexLength -1] == '?')
+		{
+			Predicates();
+		}
+		else
+		{
+
+	 	FindKeyWord();
+		}
 	}
 
 }
 
-token_type LexicalAnalyzer::FindKeyWord(string token)
+void LexicalAnalyzer::FindKeyWord()
 {
 	if(lexeme == "cons")
 	{
-		token = CONS_T;
+		token = CONS;
 	}
 	else if(lexeme == "if")
 	{
-		token = IF_T;
+		token = IF;
 	}
 	else if(lexeme == "cond")
 	{
-		token  = COND_T;
+		token  = COND;
 	}
 	else if(lexeme == "else")
 	{
-		token = ELSE_T;
+		token = ELSE;
 	}
 	else if(lexeme == "display")
 	{
-		token = DISPLAY_T;
+		token = DISPLAY;
 	}
 	else if(lexeme == "newline")
 	{
-		token = NEWLINE_T;
+		token = NEWLINE;
 	}
 	else if(lexeme == "and")
 	{
-		token  = AND_T;
+		token  = AND;
 	
 	}
 	else if (lexeme == "or")
 	{
-		token = OR_T;
+		token = OR;
 	}
 	else if(lexeme == "not")
 	{
-		token = NOT_T;
+		token = NOT;
 	}
 	else if(lexeme == "define")
 	{
-		token = DEFINE_T;
+		token = DEFINE;
+	}
+	else if (lexeme == "modulo")
+	{
+		token = MODULO; 
+	}
+	else if(lexeme = "Round")
+	{
+		token = ROUND; 
 	}
 	else 
-		token = ERROR_T; 
+		token = ER; 
 	return token; 
+}
+
