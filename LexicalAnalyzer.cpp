@@ -113,10 +113,10 @@ void LexicalAnalyzer::ReportError (const string & msg)
   // This function will be called to write an error message to a file
   if (msg != "")
     cout << msg << endl;
-  listingFile << "Error was found at line" << lineNum << pos
-	      << ": Invalid character was found: " << lexeme << endl;
-  debugFile << "Error was found at line" << lineNum << pos
-	    << ": Invalid character was found: " << lexeme << endl;
+  listingFile << "Error at " << lineNum << pos
+	      << ": Invalid character found: " << lexeme << endl;
+  debugFile << "Error at" << lineNum << pos
+	    << ": Invalid character found: " << lexeme << endl;
   errors++;
 //return;
 }
