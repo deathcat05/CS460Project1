@@ -17,31 +17,35 @@ static string input_lookup[] = { "+", "-", "/", "*", "=", "<", ">", "(", ")", "'
 
 bool testing = false;
 
-LexicalAnalyzer::LexicalAnalyzer (char * filename)
+LexicalAnalyzer::LexicalAnalyzer (char * filename): input(filename)
 {
   // This function will initialize the lexical analyzer class
 
-  DEBUG = true;
+  
   pos = 0;
   lineNum = 0;
+  /*
   lexeme = "";
   errors = 0;
-  currentPosition = 0;
-  startPosition = 0;
+  currentState = 0;
+  */
+  //startState = 0;
 
+  /*
   input.open(filename);
   if (!input)
     {
       cout << "File not found!" << endl;
       return;
     }
-  /*
+  */
+  
   if (input.fail())
     {
       cerr << "File: " << filename << " not found.\n";
       exit (2);
-      }*/
-  debugFile.open("debug.dbg", std::ofstream::out | std::ofstream::trunc);
+      }
+  //debugFile.open("debug.dbg", std::ofstream::out | std::ofstream::trunc);
 
 }
 
@@ -107,10 +111,14 @@ string LexicalAnalyzer::GetLexeme () const
 void LexicalAnalyzer::ReportError (const string & msg)
 {
   // This function will be called to write an error message to a file
-  if (msg != " ")
-    cout << "Error: Cannot find character" << endl;
-  //Not quite done with the message statement
-  return;
+  if (msg != "")
+    cout << msg << endl;
+  listingFile << "Error was found at line" << lineNum << pos
+	      << ": Invalid character was found: " << lexeme << endl;
+  debugFile << "Error was found at line" << lineNum << pos
+	    << ": Invalid character was found: " << lexeme << endl;
+  errors++;
+//return;
 }
 
 string LexicalAnalyzer::getLine ()
@@ -258,11 +266,26 @@ int LexicalAnalyzer::nextState (int currentState, char currentChar)
 	return ER;
       }
 
-  /*
-  int states[11][21] = {
 
-    return states[currentState][charColumn];
-    }*/
+int states[11][21] = {
+/*      alpha      c        a        d        r        _       #    .       +        -        /        *        >        =         <        (        )        '        "        ws  ?*/
+/*       0         1        2        3        4        5       6    7       8        9        10       11       12       13        14       15       16       17       18       19  20*/
+/*      ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+  /*0*/ {1,        2,       1,       1,       1,       ER,     5,   6,      4,       7,       DIV,     MULT,    8,       EQUALTO,  9,       LPAREN,  RPAREN,  QUOTE,   10,      GD, ER},
+  /*1*/ {1,        1,       1,       1,       1,       1,      1,  -IDKEY, -IDKEY,  -IDKEY,  -IDKEY,  -IDKEY,  -IDKEY,  -IDKEY,   -IDKEY,  -IDKEY,  -IDKEY,  -IDKEY,  -IDKEY,  -IDKEY, IDKEY },
+  /*2*/ {1,        1,       3,       3,       1,       1,      1,  -IDKEY, -IDKEY,  -IDKEY,  -IDKEY,  -IDKEY,  -IDKEY,  -IDKEY,   -IDKEY,  -IDKEY,  -IDKEY,  -IDKEY,  -IDKEY,  -IDKEY, IDKEY},
+  /*3*/ {1,        1,       1,       3,       LISTOP,  1,      1,  -IDKEY, -IDKEY,  -IDKEY,  -IDKEY,  -IDKEY,  -IDKEY,  -IDKEY,   -IDKEY,  -IDKEY,  -IDKEY,  -IDKEY,  -IDKEY,  -IDKEY, IDKEY},
+  /*4*/ {-PLUS,   -PLUS,   -PLUS,   -PLUS,   -PLUS,   -PLUS,   5,   6,     -PLUS,   -PLUS,   -PLUS,   -PLUS,   -PLUS,   -PLUS,    -PLUS,   -PLUS,   -PLUS,   -PLUS,   -PLUS,   -PLUS, -PLUS},
+  /*5*/ {-NUMLIT, -NUMLIT, -NUMLIT, -NUMLIT, -NUMLIT, -NUMLIT, 5,   6,     -NUMLIT, -NUMLIT, -NUMLIT, -NUMLIT, -NUMLIT, -NUMLIT,  -NUMLIT, -NUMLIT, -NUMLIT, -NUMLIT, -NUMLIT, -NUMLIT, -NUMLIT},
+  /*6*/ {-NUMLIT, -NUMLIT, -NUMLIT, -NUMLIT, -NUMLIT, -NUMLIT, 6,  -NUMLIT, -NUMLIT, -NUMLIT,-NUMLIT, -NUMLIT, -NUMLIT, -NUMLIT,  -NUMLIT, -NUMLIT, -NUMLIT, -NUMLIT, -NUMLIT, -NUMLIT, -NUMLIT},
+  /*7*/ {-MINUS,  -MINUS,  -MINUS,  -MINUS,  -MINUS,  -MINUS,  5,   6,     -MINUS,  -MINUS,  -MINUS,  -MINUS,  -MINUS,  -MINUS,    MINUS,  -MINUS,  -MINUS,  -MINUS,  -MINUS,  -MINUS, -MINUS},
+  /*8*/ {-GT,     -GT,     -GT,     -GT,     -GT,     -GT,    -GT, -GT,    -GT,     -GT,     -GT,     -GT,     -GT,      GTE, -GT,     -GT,     -GT,     -GT,     -GT,     -GT, -GT},
+  /*9*/ {-LT,     -LT,     -LT,     -LT,     -LT,     -LT,    -LT, -LT,    -LT,     -LT,     -LT,     -LT,     -LT,      LTE, -LT,     -LT,     -LT,     -LT,     -LT,     -LT, -GT},
+  /*10*/{10,       10,      10,      10,      10,      10,     10,  10,     10,      10,      10,      10,      10,      10,       10,      10,      10,      10,      STRLIT,  10, 10}};
+
+//return the transition state table
+ return states[currentState][charColumn];
+}
 
 string LexicalAnalyzer::category (int catState)
 {
@@ -301,23 +324,32 @@ string LexicalAnalyzer::category (int catState)
   else if (catState == ER)
     return "ERROR_T";
 }
- 
 
 token_type LexicalAnalyzer::Predicates ()
-{ //token_type taken from SyntacticalAnalyzer.cpp file
+{
+  //token_type taken from SyntacticalAnalyzer.cpp file
   
-  //This function handles the 5 predicates 
+  /*This function handles the 5 predicates*/ 
   
-  if ("number?" == lexeme)
-    return NUMBERP_T;
-  if ("list?" == lexeme)
-    return LISTP_T;
-  if ("zero?" == lexeme)
-    return ZEROP_T;
-  if ("null?" == lexeme)
-    return NULLP_T;
-  if ("string?" == lexeme)
-    return STRINGP_T;
-  return IDENT_T;
+  //Conditional: if the last character is an ? then check if it's valid 
+  if (line.length()-1 == '?')
+    {
+      if ("number?" == lexeme)
+	token = NUMBERP;
+      else if ("list?" == lexeme)
+	token = LISTP;
+      else if ("zero?" == lexeme)
+	token = ZEROP;
+      else if ("null?" == lexeme)
+	token = NULLP;
+      else if ("string?" == lexeme)
+	token = STRINGP;
+      //return IDENT_T;
+      //set to an error if none of these options
+      else
+	return ER;
+    }
+  //else
+  //return;
 }
 

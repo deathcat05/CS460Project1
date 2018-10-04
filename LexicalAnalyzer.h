@@ -6,7 +6,7 @@
 
 using namespace std;
 
-enum token_type {NONE = -1, EOF_T, NUMLIT, STRLIT, LISTOP, CONS, IF,
+enum token_type {NONE = -1, IDKEY = 100, EOF_T, NUMLIT, STRLIT, LISTOP, CONS, IF,
                  COND, ELSE, DISPLAY, NEWLINE, AND, OR, NOT, DEFINE,
 		 NUMBERP, LISTP, ZEROP, NULLP, STRINGP, PLUS, MINUS, DIV,
 		 MULT, MODULO, ROUND, EQUALTO, GT, LT, GTE, LTE, LPAREN,
@@ -28,6 +28,7 @@ class LexicalAnalyzer
 	int getLineNum ();
 	int nextState (int currentState, char currentChar);
 	string category (int catState);
+	token_type Predicates();
 	
     private:
 	ifstream input;
@@ -40,9 +41,9 @@ class LexicalAnalyzer
 	int pos;
 	string lexeme;
 	int errors;
-	int currentPosition;
-	int startPosition;
-	bool DEBUG;
+	//int currentState;
+	//int startState;
+	//bool DEBUG;
 };
 	
 #endif
