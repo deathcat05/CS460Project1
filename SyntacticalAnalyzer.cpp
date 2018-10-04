@@ -15,7 +15,7 @@ SyntacticalAnalyzer::SyntacticalAnalyzer (char * filename)
 
 	while ((t = lex->GetToken()) != EOF_T)
 	{
-	  if (count == 35) // limiting to 35 calls of GetToken for now
+	  if (count == 55) // limiting to 35 calls of GetToken for now
 	    break;
 		//Create a p1 file & open for input
 		//ofstream p1File;

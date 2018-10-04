@@ -47,12 +47,12 @@ token_type LexicalAnalyzer::GetToken ()
      After that, the only other times we'll be loading up another line again is when
      pos becomes >= the length of the line - 1 (in other words, when we've incremented
      to the end/read all the tokens in our line). */
-  if (line.empty() || pos >= line.length()-1)
+  if (line.empty() || pos >= line.length())
     {
       getline (input, line);
       pos = 0; // everytime we get a new line, we need to reset our pos variable to 0
       lineNum++; // also, increment our lineNum variable (which starts at 0 initially)
-      cout << lineNum << ".) " << line << endl; // output the line number and contents
+      cout << lineNum << ": " << line << endl; // output the line number and contents
     }
 
   /* Here is where we start parsing the line.  parseInput() wil return the lexeme it
@@ -70,40 +70,76 @@ string LexicalAnalyzer::GetTokenName (token_type t) const
 	// The GetTokenName function returns a string containing the name of the
 	// token passed to it.
 
-  if (t == PLUS || t == -PLUS)
-    return "PLUS_T";
-  else if (t == MINUS || t == -MINUS)
-    return "MINUS_T";
-  else if (t == MULT || t == -MULT)
-    return "MULT_T";
-  else if (t == DIV || t == -DIV)
-    return "DIV_T";
-  else if (t == EQUALTO || t == -EQUALTO)
-    return "EQUALTO_T";
-  else if (t == GTE || t == -GTE)
-    return "GTE_T";
-  else if (t == LTE || t == -LTE)
-    return "LTE_T";
-  else if (t == GT || t == -GT)
-    return "GT_T";
-  else if (t == LT || t == -LT)
-    return "LT_T";
-  else if (t == LPAREN || t == -LPAREN)
-    return "LPAREN_T";
-  else if (t == RPAREN || t == -RPAREN)
-    return "RPAREN_T";
-  else if (t == QUOTE || t == -QUOTE)
-    return "QUOTE_T";
-  else if (t == LISTOP || t == -LISTOP)
-    return "LISTOP_T";
-  else if (t == IDKEY || t == -IDKEY)
-    return "IDKEY_T";
+  if (t == IDKEY || t == -IDKEY)
+    return token_names[0];
   else if (t == NUMLIT || t == -NUMLIT)
-    return "NUMLIT_T";
+    return token_names[1];
   else if (t == STRLIT || t == -STRLIT)
-    return "STRLIT_T";
-  else if (t == ER)
-    return "ERROR_T";
+    return token_names[2];
+  else if (t == LISTOP || t == -LISTOP)
+    return token_names[3];
+  else if (t == CONS || t == -CONS)
+    return token_names[4];
+  else if (t == IF || t == -IF)
+    return token_names[5];
+  else if (t == COND || t == -COND)
+    return token_names[6];
+  else if (t == ELSE || t == -ELSE)
+    return token_names[7];
+  else if (t == DISPLAY || t == -DISPLAY)
+    return token_names[8];
+  else if (t == NEWLINE || t == -NEWLINE)
+    return token_names[9];
+  else if (t == AND || t == -AND)
+    return token_names[10];
+  else if (t == OR || t == -OR)
+    return token_names[11];
+  else if (t == NOT || t == -NOT)
+    return token_names[12];
+  else if (t == DEFINE || t == -DEFINE)
+    return token_names[13];
+  else if (t == NUMBERP || t == -NUMBERP)
+    return token_names[14];
+  else if (t == LISTP || t == -LISTP)
+    return token_names[15];
+  else if (t == ZEROP || t == -ZEROP)
+    return token_names[16];
+  else if (t == NULLP || t == -NULLP)
+    return token_names[17];
+  else if (t == STRINGP || t == -STRINGP)
+    return token_names[18];
+  else if (t == PLUS || t == -PLUS)
+    return token_names[19];
+  else if (t == MINUS || t == -MINUS)
+    return token_names[20];
+  else if (t == DIV || t == -DIV)
+    return token_names[21];
+  else if (t == MULT || t == -MULT)
+    return token_names[22];
+  else if (t == MODULO || t == -MODULO)
+    return token_names[23];
+  else if (t == ROUND || t == -ROUND)
+    return token_names[24];
+  else if (t == EQUALTO || t == -EQUALTO)
+    return token_names[25];
+  else if (t == GT || t == -GT)
+    return token_names[26];
+  else if (t == LT || t == -LT)
+    return token_names[27];
+  else if (t == GTE || t == -GTE)
+    return token_names[28];
+  else if (t == LTE || t == -LTE)
+    return token_names[29];
+  else if (t == LPAREN || t == -LPAREN)
+    return token_names[30];
+  else if (t == RPAREN || t == -RPAREN)
+    return token_names[31];
+  else if (t == SQUOTE || t == -SQUOTE)
+    return token_names[32];
+  else if (t == ER || t == -ER)
+    return token_names[33];
+  else if (t == EOF || t == -EOF)
+    return token_names[34];
 
 }
 
@@ -137,6 +173,8 @@ string LexicalAnalyzer::parseInput ()
   string code = getLine();
    while (pos < code.length())
     {
+      if (testing)
+	cout << ">> TOP OF WHILE: pos = " << pos << " code.length() = " << code.length() << endl;
       int state = 0;
       // read in characters one at a time, add to temp, evaluate new state
       while (state > -1 && state < 100)
@@ -156,6 +194,8 @@ string LexicalAnalyzer::parseInput ()
       // if we need to back up...
       if (state < -1 || state == BU)
         {
+	  if (testing)
+	    cout << ">> BACKING UP AND ERASING LAST CHAR: " << endl;
           temp.erase(temp.length()-1, 1); // erase the last character
           pos--; // decrement position
         }
@@ -258,7 +298,11 @@ int LexicalAnalyzer::nextState (int currentState, char currentChar)
       case '?':
 	charColumn = 20;
 	break;
-
+	
+      case '\n':
+	charColumn = 21;
+	break;
+	
       case '\0':
 	return BU;
 	
@@ -266,21 +310,21 @@ int LexicalAnalyzer::nextState (int currentState, char currentChar)
 	return ER;
       }
 
-int states[11][21] = {
-/*      alpha      c        a        d        r        _       #    .       +        -        /        *        >        =         <        (        )        '        "        ws  ?*/
-/*       0         1        2        3        4        5       6    7       8        9        10       11       12       13        14       15       16       17       18       19  20*/
-/*      ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-  /*0*/ {1,        2,       1,       1,       1,       ER,     5,   6,      4,       7,       DIV,     MULT,    8,       EQUALTO,  9,       LPAREN,  RPAREN,  QUOTE,   10,      GD, ER},
-  /*1*/ {1,        1,       1,       1,       1,       1,      1,  -IDKEY, -IDKEY,  -IDKEY,  -IDKEY,  -IDKEY,  -IDKEY,  -IDKEY,   -IDKEY,  -IDKEY,  -IDKEY,  -IDKEY,  -IDKEY,  -IDKEY, IDKEY },
-  /*2*/ {1,        1,       3,       3,       1,       1,      1,  -IDKEY, -IDKEY,  -IDKEY,  -IDKEY,  -IDKEY,  -IDKEY,  -IDKEY,   -IDKEY,  -IDKEY,  -IDKEY,  -IDKEY,  -IDKEY,  -IDKEY, IDKEY},
-  /*3*/ {1,        1,       1,       3,       LISTOP,  1,      1,  -IDKEY, -IDKEY,  -IDKEY,  -IDKEY,  -IDKEY,  -IDKEY,  -IDKEY,   -IDKEY,  -IDKEY,  -IDKEY,  -IDKEY,  -IDKEY,  -IDKEY, IDKEY},
-  /*4*/ {-PLUS,   -PLUS,   -PLUS,   -PLUS,   -PLUS,   -PLUS,   5,   6,     -PLUS,   -PLUS,   -PLUS,   -PLUS,   -PLUS,   -PLUS,    -PLUS,   -PLUS,   -PLUS,   -PLUS,   -PLUS,   -PLUS, -PLUS},
-  /*5*/ {-NUMLIT, -NUMLIT, -NUMLIT, -NUMLIT, -NUMLIT, -NUMLIT, 5,   6,     -NUMLIT, -NUMLIT, -NUMLIT, -NUMLIT, -NUMLIT, -NUMLIT,  -NUMLIT, -NUMLIT, -NUMLIT, -NUMLIT, -NUMLIT, -NUMLIT, -NUMLIT},
-  /*6*/ {-NUMLIT, -NUMLIT, -NUMLIT, -NUMLIT, -NUMLIT, -NUMLIT, 6,  -NUMLIT, -NUMLIT, -NUMLIT,-NUMLIT, -NUMLIT, -NUMLIT, -NUMLIT,  -NUMLIT, -NUMLIT, -NUMLIT, -NUMLIT, -NUMLIT, -NUMLIT, -NUMLIT},
-  /*7*/ {-MINUS,  -MINUS,  -MINUS,  -MINUS,  -MINUS,  -MINUS,  5,   6,     -MINUS,  -MINUS,  -MINUS,  -MINUS,  -MINUS,  -MINUS,    MINUS,  -MINUS,  -MINUS,  -MINUS,  -MINUS,  -MINUS, -MINUS},
-  /*8*/ {-GT,     -GT,     -GT,     -GT,     -GT,     -GT,    -GT, -GT,    -GT,     -GT,     -GT,     -GT,     -GT,      GTE, -GT,     -GT,     -GT,     -GT,     -GT,     -GT, -GT},
-  /*9*/ {-LT,     -LT,     -LT,     -LT,     -LT,     -LT,    -LT, -LT,    -LT,     -LT,     -LT,     -LT,     -LT,      LTE, -LT,     -LT,     -LT,     -LT,     -LT,     -LT, -GT},
-  /*10*/{10,       10,      10,      10,      10,      10,     10,  10,     10,      10,      10,      10,      10,      10,       10,      10,      10,      10,      STRLIT,  10, 10}};
+int states[11][22] = {
+/*      alpha     c       a       d       r       _      #   .      +       -       /       *       >       =        <       (       )       '       "       ws      ?      \n      */
+/*       0        1       2       3       4       5      6   7      8       9       10      11      12      13       14      15      16      17      18      19      20     21      */
+/*      ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+  /*0*/ {1,       2,      1,      1,      1,      ER,    5,  6,     4,      7,      DIV,    MULT,   8,      EQUALTO, 9,      LPAREN, RPAREN, SQUOTE, 10,     GD,     ER,    BU},
+  /*1*/ {1,       1,      1,      1,      1,      1,     1, -IDKEY,-IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY,  -IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY,  IDKEY, -IDKEY},
+  /*2*/ {1,       1,      3,      3,      1,      1,     1, -IDKEY,-IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY,  -IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY,  IDKEY, BU},
+  /*3*/ {1,       1,      1,      3,      LISTOP, 1,     1, -IDKEY,-IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY,  -IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY,  IDKEY, BU},
+  /*4*/ {-PLUS,  -PLUS,  -PLUS,  -PLUS,  -PLUS,  -PLUS,  5,  6,    -PLUS,  -PLUS,  -PLUS,  -PLUS,  -PLUS,  -PLUS,   -PLUS,  -PLUS,  -PLUS,  -PLUS,  -PLUS,  -PLUS,  -PLUS,  BU},
+  /*5*/ {-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,5,  6,    -NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT, -NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,BU},
+  /*6*/ {-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,6, -NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,BU},
+  /*7*/ {-MINUS, -MINUS, -MINUS, -MINUS, -MINUS, -MINUS, 5,  6,    -MINUS, -MINUS, -MINUS, -MINUS, -MINUS, -MINUS,   MINUS, -MINUS, -MINUS, -MINUS, -MINUS, -MINUS, -MINUS, BU},
+  /*8*/ {-GT,    -GT,    -GT,    -GT,    -GT,    -GT,   -GT,-GT,   -GT,    -GT,    -GT,    -GT,    -GT,     GTE,    -GT,    -GT,    -GT,    -GT,    -GT,    -GT,    -GT,    BU},
+  /*9*/ {-LT,    -LT,    -LT,    -LT,    -LT,    -LT,   -LT,-LT,   -LT,    -LT,    -LT,    -LT,    -LT,     LTE,    -LT,    -LT,    -LT,    -LT,    -LT,    -LT,    -GT,    BU},
+  /*10*/{10,      10,     10,     10,     10,     10,    10, 10,    10,     10,     10,     10,     10,     10,      10,     10,     10,     10,     STRLIT, 10,     10,    ER}};
  
   // return the transition state value
   return states[currentState][charColumn];

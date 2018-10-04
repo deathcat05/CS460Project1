@@ -10,7 +10,7 @@ enum token_type {NONE = -1, IDKEY = 100, NUMLIT, STRLIT, LISTOP, CONS, IF,
                  COND, ELSE, DISPLAY, NEWLINE, AND, OR, NOT, DEFINE,
 		 NUMBERP, LISTP, ZEROP, NULLP, STRINGP, PLUS, MINUS, DIV,
 		 MULT, MODULO, ROUND, EQUALTO, GT, LT, GTE, LTE, LPAREN,
-                 RPAREN, QUOTE, BU, GD, ER, EOF_T, NUM_TOKENS};
+                 RPAREN, SQUOTE, BU, GD, ER, EOF_T, NUM_TOKENS};
 
 class LexicalAnalyzer 
 {
