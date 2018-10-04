@@ -21,6 +21,9 @@ class LexicalAnalyzer
 	string GetTokenName (token_type t) const;
 	string GetLexeme () const;
 	void ReportError (const string & msg);
+	void SetToken();
+	token_type FindKeyWord(string lexeme);
+	//void ValidateIdentifier(string token);
 
 	// functions I added
 	string parseInput();

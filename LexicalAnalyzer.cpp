@@ -58,6 +58,7 @@ token_type LexicalAnalyzer::GetToken ()
   /* Here is where we start parsing the line.  parseInput() wil return the lexeme it
      finds as a string, which we then assign to our private variable lexeme */
   lexeme = parseInput();
+  SetToken();
 
   /* somewhere in here we'll take the lexeme we found and process it to determine the
      type of token that it is, its string name, etc */
@@ -131,6 +132,7 @@ string LexicalAnalyzer::parseInput ()
 	  break;
 	}
     }
+ 
    return temp;
 }
 
@@ -338,3 +340,60 @@ string LexicalAnalyzer::category (int catState)
     return "ERROR_T";
 }
 
+void LexicalAnalyzer::SetToken()
+{
+	string temp; 
+	if(temp == "IDKEY_T")
+	{
+	 	FindKeyWord(temp);
+	}
+
+}
+
+token_type LexicalAnalyzer::FindKeyWord(string token)
+{
+	if(lexeme == "cons")
+	{
+		token = CONS_T;
+	}
+	else if(lexeme == "if")
+	{
+		token = IF_T;
+	}
+	else if(lexeme == "cond")
+	{
+		token  = COND_T;
+	}
+	else if(lexeme == "else")
+	{
+		token = ELSE_T;
+	}
+	else if(lexeme == "display")
+	{
+		token = DISPLAY_T;
+	}
+	else if(lexeme == "newline")
+	{
+		token = NEWLINE_T;
+	}
+	else if(lexeme == "and")
+	{
+		token  = AND_T;
+	
+	}
+	else if (lexeme == "or")
+	{
+		token = OR_T;
+	}
+	else if(lexeme == "not")
+	{
+		token = NOT_T;
+	}
+	else if(lexeme == "define")
+	{
+		token = DEFINE_T;
+	}
+	else 
+		token = ERROR_T; 
+	return token; 
+}
