@@ -6,7 +6,11 @@
 
 using namespace std;
 
-enum token_type {NONE = -1, EOF_T, NUM_TOKENS};
+enum token_type {NONE = -1, EOF_T, NUMLIT, STRLIT, LISTOP, CONS, IF,
+                 COND, ELSE, DISPLAY, NEWLINE, AND, OR, NOT, DEFINE,
+		 NUMBERP, LISTP, ZEROP, NULLP, STRINGP, PLUS, MINUS, DIV,
+		 MULT, MODULO, ROUND, EQUALTO, GT, LT, GTE, LTE, LPAREN,
+                 RPAREN, QUOTE, BU, GD, ER, EOF_T,NUM_TOKENS};
 
 class LexicalAnalyzer 
 {
@@ -28,6 +32,9 @@ class LexicalAnalyzer
 	int pos;
 	string lexeme;
 	int errors;
+	int currentPosition;
+	int startPosition;
+	bool DEBUG;
 };
 	
 #endif
