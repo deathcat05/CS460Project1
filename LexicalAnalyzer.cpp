@@ -68,15 +68,50 @@ token_type LexicalAnalyzer::GetToken ()
 string LexicalAnalyzer::GetTokenName (token_type t) const
 {
 	// The GetTokenName function returns a string containing the name of the
-	// token passed to it. 
-	return "";
+	// token passed to it.
+
+  if (t == PLUS || t == -PLUS)
+    return "PLUS_T";
+  else if (t == MINUS || t == -MINUS)
+    return "MINUS_T";
+  else if (t == MULT || t == -MULT)
+    return "MULT_T";
+  else if (t == DIV || t == -DIV)
+    return "DIV_T";
+  else if (t == EQUALTO || t == -EQUALTO)
+    return "EQUALTO_T";
+  else if (t == GTE || t == -GTE)
+    return "GTE_T";
+  else if (t == LTE || t == -LTE)
+    return "LTE_T";
+  else if (t == GT || t == -GT)
+    return "GT_T";
+  else if (t == LT || t == -LT)
+    return "LT_T";
+  else if (t == LPAREN || t == -LPAREN)
+    return "LPAREN_T";
+  else if (t == RPAREN || t == -RPAREN)
+    return "RPAREN_T";
+  else if (t == QUOTE || t == -QUOTE)
+    return "QUOTE_T";
+  else if (t == LISTOP || t == -LISTOP)
+    return "LISTOP_T";
+  else if (t == IDKEY || t == -IDKEY)
+    return "IDKEY_T";
+  else if (t == NUMLIT || t == -NUMLIT)
+    return "NUMLIT_T";
+  else if (t == STRLIT || t == -STRLIT)
+    return "STRLIT_T";
+  else if (t == ER)
+    return "ERROR_T";
+
 }
 
 string LexicalAnalyzer::GetLexeme () const
 {
 	// This function will return the lexeme found by the most recent call to 
 	// the get_token function
-	return "";
+	return lexeme;
 }
 
 void LexicalAnalyzer::ReportError (const string & msg)
@@ -231,54 +266,6 @@ int LexicalAnalyzer::nextState (int currentState, char currentChar)
 	return ER;
       }
 
-  // original set of if/else statements
-  /*
-  else if (currentChar == 'c')
-    charColumn = 1;
-  else if (currentChar == 'a')
-    charColumn = 2;
-  else if (currentChar == 'd')
-    charColumn = 3;
-  else if (currentChar == 'r')
-    charColumn = 4;
-  else if (currentChar == '_')
-    charColumn = 5;
-  else if (isdigit(currentChar))
-    charColumn = 6;
-  else if (currentChar == '.')
-    charColumn = 7;
-  else if (currentChar == '+')
-    charColumn = 8;
-  else if (currentChar == '-')
-    charColumn = 9;
-  else if (currentChar == '/')
-    charColumn = 10;
-  else if (currentChar == '*')
-    charColumn = 11;
-  else if (currentChar == '>')
-    charColumn = 12;
-  else if (currentChar == '=')
-    charColumn = 13;
-  else if (currentChar == '<')
-    charColumn = 14;
-  else if (currentChar == '(')
-    charColumn = 15;
-  else if (currentChar == ')')
-    charColumn = 16;
-  else if (currentChar == '\'')
-    charColumn = 17;
-  else if (currentChar == '"')
-    charColumn = 18;
-  else if (currentChar == ' ')
-    charColumn = 19;
-  else if (currentChar =='?')
-    charColumn = 20;
-  else if (currentChar == '\0')
-    return BU;
-  else
-    return ER;
-  */
-
 int states[11][21] = {
 /*      alpha      c        a        d        r        _       #    .       +        -        /        *        >        =         <        (        )        '        "        ws  ?*/
 /*       0         1        2        3        4        5       6    7       8        9        10       11       12       13        14       15       16       17       18       19  20*/
@@ -298,43 +285,3 @@ int states[11][21] = {
   // return the transition state value
   return states[currentState][charColumn];
 }
-
-// also from class activities...
-string LexicalAnalyzer::category (int catState)
-{
-  if (catState == PLUS || catState == -PLUS)
-    return "PLUS_T";
-  else if (catState == MINUS || catState == -MINUS)
-    return "MINUS_T";
-  else if (catState == MULT || catState == -MULT)
-    return "MULT_T";
-  else if (catState == DIV || catState == -DIV)
-    return "DIV_T";
-  else if (catState == EQUALTO || catState == -EQUALTO)
-    return "EQUALTO_T";
-  else if (catState == GTE || catState == -GTE)
-    return "GTE_T";
-  else if (catState == LTE || catState == -LTE)
-    return "LTE_T";
-  else if (catState == GT || catState == -GT)
-    return "GT_T";
-  else if (catState == LT || catState == -LT)
-    return "LT_T";
-  else if (catState == LPAREN || catState == -LPAREN)
-    return "LPAREN_T";
-  else if (catState == RPAREN || catState == -RPAREN)
-    return "RPAREN_T";
-  else if (catState == QUOTE || catState == -QUOTE)
-    return "QUOTE_T";
-  else if (catState == LISTOP || catState == -LISTOP)
-    return "LISTOP_T";
-  else if (catState == IDKEY || catState == -IDKEY)
-    return "IDKEY_T";
-  else if (catState == NUMLIT || catState == -NUMLIT)
-    return "NUMLIT_T";
-  else if (catState == STRLIT || catState == -STRLIT)
-    return "STRLIT_T";
-  else if (catState == ER)
-    return "ERROR_T";
-}
-
