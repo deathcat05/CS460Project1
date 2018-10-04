@@ -15,7 +15,7 @@ static string token_names[] = {	"IDENT_T", "NUMLIT_T", "STRLIT_T", "LISTOP_T", "
 
 static string input_lookup[] = { "+", "-", "/", "*", "=", "<", ">", "(", ")", "'", "c", "a", "d", "r", "#", "_", ".", "?", "alpha", "other" };
 
-//static string table [] = {}; 
+bool testing = false;
 
 LexicalAnalyzer::LexicalAnalyzer (char * filename)
 {
@@ -23,7 +23,7 @@ LexicalAnalyzer::LexicalAnalyzer (char * filename)
 
   DEBUG = true;
   pos = 0;
-  linenum = 0;
+  lineNum = 0;
   lexeme = "";
   errors = 0;
   currentPosition = 0;
@@ -64,6 +64,22 @@ token_type LexicalAnalyzer::GetToken ()
 {
   // This function will find the next lexeme int the input file and return
   // the token_type value associated with that lexeme
+
+   if (line.empty() || pos >= line.length()-1)
+    {
+      getline (input, line);
+      pos = 0;
+      // everytime we get a new line, we need to reset our pos variable to 0
+      lineNum++;
+      // also, increment our lineNum variable (which starts at 0 initially)
+      cout << lineNum << ".) " << line << endl;
+      // output the line number and contents
+    }
+
+  /* Here is where we start parsing the line.  parseInput() wil return the lexeme it
+     finds as a string, which we then assign to our private variable lexeme */
+  lexeme = parseInput();
+
   return token;
 }
 
@@ -83,7 +99,7 @@ string LexicalAnalyzer::GetLexeme () const
 
   //Probably a good spot for the DFA??
   
-  // return "";
+  return "";
   
   // return lexeme;
 }
@@ -97,7 +113,196 @@ void LexicalAnalyzer::ReportError (const string & msg)
   return;
 }
 
-/*
+string LexicalAnalyzer::getLine ()
+{
+  return line;
+}
+
+int LexicalAnalyzer::getLineNum()
+{
+  return lineNum;
+}
+
+string LexicalAnalyzer::parseInput ()
+{
+  string temp;
+  string code = getLine();
+   while (pos < code.length())
+    {
+      int state = 0;
+      // read in characters one at a time, add to temp, evaluate new state
+      while (state > -1 && state < 100)
+        {
+	  if (testing)
+	    cout << ">> Current position: " << pos << endl;
+          temp += code[pos];
+          if (testing)
+            cout << ">> CURRENT STATE: " << state << ", looking at " << code[pos] << endl;
+          state = nextState(state, code[pos]);
+          if (testing)
+            cout << ">> TRANSITIONED TO STATE: " << state << endl;
+          pos++;
+        }
+      if (testing)
+        cout << ">> END STATE: " << state << endl;
+      // if we need to back up...
+      if (state < -1 || state == BU)
+        {
+          temp.erase(temp.length()-1, 1); // erase the last character
+          pos--; // decrement position
+        }
+      // check that temp isn't empty or just whitespace, then print
+      if (temp != "" && temp != " ")
+	{
+	  cout << '\t' << temp << endl; //<< '\t' << category(state) << endl;
+	  break;
+	}
+    }
+   return temp;
+}
+
+// this is also, for now, unchanged from our class activities
+int LexicalAnalyzer::nextState (int currentState, char currentChar)
+{
+  int charColumn;
+  // set col to appropriate value based on transition matrix
+  if (isalpha(currentChar) && currentChar != 'c' && currentChar != 'a' && currentChar != 'd' && currentChar != 'r')
+    charColumn = 0;
+  
+  else if (isdigit(currentChar))
+    charColumn = 6;
+
+  else
+    switch (currentChar)
+      {
+      case 'c':
+	charColumn = 1;
+	break;
+	
+      case 'a':
+	charColumn = 2;
+	break;
+	
+      case 'd':
+	charColumn = 3;
+	break;
+	
+      case 'r':
+	charColumn = 4;
+	break;
+
+      case '_':
+	charColumn = 5;
+	break;
+	
+      case '.':
+	charColumn = 7;
+	break;
+	
+      case '+':
+	charColumn = 8;
+	break;
+	
+      case '-':
+	charColumn = 9;
+	break;
+	
+      case '/':
+	charColumn = 10;
+	break;
+
+      case '*':
+	charColumn = 11;
+	break;
+	
+      case '>':
+	charColumn = 12;
+	break;
+      
+      case '=':
+	charColumn = 13;
+	break;
+
+      case '<':
+	charColumn = 14;
+	break;
+      
+      case '(':
+	charColumn = 15;
+	break;
+	
+      case ')':
+	charColumn = 16;
+	break;
+	
+      case '\'':
+	charColumn = 17;
+	break;
+	
+      case '"':
+	charColumn = 18;
+	break;
+	
+      case ' ':
+	charColumn = 19;
+	break;
+      
+      case '?':
+	charColumn = 20;
+	break;
+
+      case '\0':
+	return BU;
+
+      default:
+	return ER;
+      }
+
+  /*
+  int states[11][21] = {
+
+    return states[currentState][charColumn];
+    }*/
+
+string LexicalAnalyzer::category (int catState)
+{
+  if (catState == PLUS || catState == -PLUS)
+    return "PLUS_T";
+  else if (catState == MINUS || catState == -MINUS)
+    return "MINUS_T";
+  else if (catState == MULT || catState == -MULT)
+    return "MULT_T";
+  else if (catState == DIV || catState == -DIV)
+    return "DIV_T";
+  else if (catState == EQUALTO || catState == -EQUALTO)
+    return "EQUALTO_T";
+  else if (catState == GTE || catState == -GTE)
+    return "GTE_T";
+  else if (catState == LTE || catState == -LTE)
+    return "LTE_T";
+  else if (catState == GT || catState == -GT)
+    return "GT_T";
+  else if (catState == LT || catState == -LT)
+    return "LT_T";
+  else if (catState == LPAREN || catState == -LPAREN)
+    return "LPAREN_T";
+  else if (catState == RPAREN || catState == -RPAREN)
+    return "RPAREN_T";
+  else if (catState == QUOTE || catState == -QUOTE)
+    return "QUOTE_T";
+  else if (catState == LISTOP || catState == -LISTOP)
+    return "LISTOP_T";
+  else if (catState == IDKEY || catState == -IDKEY)
+    return "IDKEY_T";
+  else if (catState == NUMLIT || catState == -NUMLIT)
+    return "NUMLIT_T";
+  else if (catState == STRLIT || catState == -STRLIT)
+    return "STRLIT_T";
+  else if (catState == ER)
+    return "ERROR_T";
+}
+ 
+
 token_type LexicalAnalyzer::Predicates ()
 { //token_type taken from SyntacticalAnalyzer.cpp file
   
@@ -115,4 +320,4 @@ token_type LexicalAnalyzer::Predicates ()
     return STRINGP_T;
   return IDENT_T;
 }
-*/
+
