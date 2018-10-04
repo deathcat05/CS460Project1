@@ -6,7 +6,6 @@
 
 using namespace std;
 
-<<<<<<< HEAD
 static string token_names[] = { "IDENT_T","NUMLIT_T","STRLIT_T","LISTOP_T","CONS_T","IF_T",
                                 "COND_T","ELSE_T","DISPLAY_T","NEWLINE_T","AND_T","OR_T",
                                 "NOT_T","DEFINE_T","NUMBERP_T","LISTP_T","ZEROP_T","NULLP_T",
@@ -411,9 +410,3 @@ token_type LexicalAnalyzer::FindKeyWord(string token)
 	else 
 		token = ERROR_T; 
 	return token; 
-=======
-void LexicalAnalyzer::GetInputFile(char *filename)
-{
-	ifstream inFile = &getrmInput();
->>>>>>> ddcb7d1a9973d963796dd3c13f0252d64dd6e5c4
-}
