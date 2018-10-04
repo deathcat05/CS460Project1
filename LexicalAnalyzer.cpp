@@ -1,9 +1,12 @@
 #include <iomanip>
+#include <vector>
 #include <cstdlib>
+#include <fstream>
 #include "LexicalAnalyzer.h"
 
 using namespace std;
 
+<<<<<<< HEAD
 static string token_names[] = { "IDENT_T","NUMLIT_T","STRLIT_T","LISTOP_T","CONS_T","IF_T",
                                 "COND_T","ELSE_T","DISPLAY_T","NEWLINE_T","AND_T","OR_T",
                                 "NOT_T","DEFINE_T","NUMBERP_T","LISTP_T","ZEROP_T","NULLP_T",
@@ -26,16 +29,27 @@ LexicalAnalyzer::LexicalAnalyzer (char * filename): input(filename)
   pos = 0; // set pos to 0
   lineNum = 0; // set lineNum to 0
 
+=======
+static string token_names[] = {"EOF_T"};
+
+LexicalAnalyzer::LexicalAnalyzer(char *filename)
+{
+	GetInputFile(filename);
+
+	// This function will initialize the lexical analyzer class
+
+	// Transition Table goes here.
+>>>>>>> ddcb7d1a9973d963796dd3c13f0252d64dd6e5c4
 }
 
-LexicalAnalyzer::~LexicalAnalyzer ()
+LexicalAnalyzer::~LexicalAnalyzer()
 {
 	// This function will complete the execution of the lexical analyzer class
 
 
 }
 
-token_type LexicalAnalyzer::GetToken ()
+token_type LexicalAnalyzer::GetToken()
 {
 	// This function will find the next lexeme in the input file and return
 	// the token_type value associated with that lexeme
@@ -66,25 +80,26 @@ token_type LexicalAnalyzer::GetToken ()
   return token; // not returning anything at the moment...
 }
 
-string LexicalAnalyzer::GetTokenName (token_type t) const
+string LexicalAnalyzer::GetTokenName(token_type t) const
 {
 	// The GetTokenName function returns a string containing the name of the
-	// token passed to it. 
+	// token passed to it.
 	return "";
 }
 
-string LexicalAnalyzer::GetLexeme () const
+string LexicalAnalyzer::GetLexeme() const
 {
-	// This function will return the lexeme found by the most recent call to 
+	// This function will return the lexeme found by the most recent call to
 	// the get_token function
 	return "";
 }
 
-void LexicalAnalyzer::ReportError (const string & msg)
+void LexicalAnalyzer::ReportError(const string &msg)
 {
 	// This function will be called to write an error message to a file
 }
 
+<<<<<<< HEAD
 string LexicalAnalyzer::getLine ()
 {
   return line;
@@ -396,4 +411,9 @@ token_type LexicalAnalyzer::FindKeyWord(string token)
 	else 
 		token = ERROR_T; 
 	return token; 
+=======
+void LexicalAnalyzer::GetInputFile(char *filename)
+{
+	ifstream inFile = &getrmInput();
+>>>>>>> ddcb7d1a9973d963796dd3c13f0252d64dd6e5c4
 }
