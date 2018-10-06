@@ -55,14 +55,18 @@ token_type LexicalAnalyzer::GetToken ()
       cout << lineNum << ": " << line << endl; // output the line number and contents
     }
 
-  /* Here is where we start parsing the line.  parseInput() wil return the lexeme it
-     finds as a string, which we then assign to our private variable lexeme */
-  lexeme = parseInput();
-
-  /* somewhere in here we'll take the lexeme we found and process it to determine the
-     type of token that it is, its string name, etc */
+  /* Here is where we start parsing the line.  parseInput() will set the value of
+     lexeme, and return the state it ended in */
+  int currentState;
+  currentState = parseInput();
+  // if the lexeme isn't empty, and, if the line isn't blank, set the token type value
+  if (lexeme != "" && lexeme != " " && !line.empty())
+    {
+      SetToken(currentState);
+      cout << '\t' << GetTokenName(token) << endl;
+    }
   
-  return token; // not returning anything at the moment...
+  return token;
 }
 
 string LexicalAnalyzer::GetTokenName (token_type t) const
@@ -143,16 +147,120 @@ string LexicalAnalyzer::GetTokenName (token_type t) const
 
 }
 
+void LexicalAnalyzer::SetToken(int state)
+{
+  int LexLength = lexeme.length();
+  if (state == IDKEY || state == -IDKEY || state == LISTOP)
+    {
+      if(lexeme[LexLength -1] == '?')
+	FindPredicates();
+      else
+	FindKeywords(state);
+    }
+  else
+    FindOtherTypes(state);
+}
+
+void LexicalAnalyzer::FindPredicates ()
+{
+  /*This function handles the 5 predicates*/ 
+  
+  if ("number?" == lexeme)
+    token = NUMBERP;
+  else if ("list?" == lexeme)
+    token = LISTP;
+  else if ("zero?" == lexeme)
+    token = ZEROP;
+  else if ("null?" == lexeme)
+    token = NULLP;
+  else if ("string?" == lexeme)
+    token = STRINGP;
+  else
+    token = ER;
+  
+}
+
+void LexicalAnalyzer::FindKeywords(int state)
+{
+  /* everything coming into this function has been identified as an IDKEY,
+     if, it doesn't match any of the keywords, then it remains an IDKEY */
+  if (state == LISTOP)
+    token = LISTOP;
+  else if(lexeme == "cons")
+      token = CONS;
+  else if(lexeme == "if")
+      token = IF;
+  else if(lexeme == "cond")
+      token  = COND;
+  else if(lexeme == "else")
+      token = ELSE;
+  else if(lexeme == "display")
+      token = DISPLAY;
+  else if(lexeme == "newline")
+      token = NEWLINE;
+  else if(lexeme == "and")
+      token  = AND;
+  else if (lexeme == "or")
+      token = OR;
+  else if(lexeme == "not")
+      token = NOT;
+  else if(lexeme == "define")
+      token = DEFINE;
+  else if (lexeme == "modulo")
+      token = MODULO; 
+  else if(lexeme == "round")
+      token = ROUND;
+  else 
+    token = IDKEY;
+}
+
+void LexicalAnalyzer::FindOtherTypes(int state)
+{
+  /* everything coming into this function has been identified as something
+     OTHER than an IDKEY, and so, of the remaining token types it could be
+     we evaluate what it is below */
+  if (state == NUMLIT || state == -NUMLIT)
+    token = NUMLIT;
+  else if (state == STRLIT || state == -STRLIT)
+    token = STRLIT;
+  else if (lexeme == "$" || lexeme == "?")
+    token = ER;
+  else if (state == PLUS || state == -PLUS)
+    token = PLUS;
+  else if (state == MINUS || state == -MINUS)
+    token = MINUS;
+  else if (state == DIV || state == -DIV)
+    token = DIV;
+  else if (state == MULT || state == -MULT)
+    token = MULT;
+  else if (state == EQUALTO || state == -EQUALTO)
+    token = EQUALTO;
+  else if (state == GT || state == -GT)
+    token = GT;
+  else if (state == LT || state == -LT)
+    token = LT;
+  else if (state == GTE || state == -GTE)
+    token = GTE;
+  else if (state == LTE || state == -LTE)
+    token = LTE;
+  else if (state == LPAREN || state == -LPAREN)
+    token = LPAREN;
+  else if (state == RPAREN || state == -RPAREN)
+    token = RPAREN;
+  else if (state == SQUOTE || state == -SQUOTE)
+    token = SQUOTE;
+}
+
 string LexicalAnalyzer::GetLexeme () const
 {
-	// This function will return the lexeme found by the most recent call to 
-	// the get_token function
-	return lexeme;
+  // This function will return the lexeme found by the most recent call to 
+  // the get_token function
+  return lexeme;
 }
 
 void LexicalAnalyzer::ReportError (const string & msg)
 {
-	// This function will be called to write an error message to a file
+  // This function will be called to write an error message to a file
 }
 
 string LexicalAnalyzer::getLine ()
@@ -165,9 +273,7 @@ int LexicalAnalyzer::getLineNum()
   return lineNum;
 }
 
-/* not documenting this extensively just yet as a lot may change but this is basically
-   what was used during our class activities to deal with those input types */
-string LexicalAnalyzer::parseInput ()
+int LexicalAnalyzer::parseInput ()
 {
   string temp;
   string code = getLine();
@@ -175,6 +281,7 @@ string LexicalAnalyzer::parseInput ()
     {
       if (testing)
 	cout << ">> TOP OF WHILE: pos = " << pos << " code.length() = " << code.length() << endl;
+
       int state = 0;
       // read in characters one at a time, add to temp, evaluate new state
       while (state > -1 && state < 100)
@@ -202,14 +309,15 @@ string LexicalAnalyzer::parseInput ()
       // check that temp isn't empty or just whitespace, then print
       if (temp != "" && temp != " ")
 	{
-	  cout << '\t' << temp << endl; //<< '\t' << category(state) << endl;
-	  break;
+	  cout << '\t' << temp << '\t';//GetTokenName(token) << endl;
+	  lexeme = temp; // set the vale of lexeme
+	  return state; /// return state value
 	}
+      else // if the string turns out to be blank, full of whitespace, etc
+	temp = ""; // reset the string value
     }
-   return temp;
 }
 
-// this is also, for now, unchanged from our class activities
 int LexicalAnalyzer::nextState (int currentState, char currentChar)
 {
   int charColumn;
@@ -298,32 +406,33 @@ int LexicalAnalyzer::nextState (int currentState, char currentChar)
       case '?':
 	charColumn = 20;
 	break;
-	
+	/* removed for now, didn't appear to be useful
       case '\n':
 	charColumn = 21;
 	break;
-	
-      case '\0':
-	return BU;
+	*/
+      case '\0': // the null terminator however continues to show up from time to time
+	charColumn = 21;
+	break;
 	
       default:
 	return ER;
       }
 
 int states[11][22] = {
-/*      alpha     c       a       d       r       _      #   .      +       -       /       *       >       =        <       (       )       '       "       ws      ?      \n      */
+/*      alpha     c       a       d       r       _      #   .      +       -       /       *       >       =        <       (       )       '       "       ws      ?      \0      */
 /*       0        1       2       3       4       5      6   7      8       9       10      11      12      13       14      15      16      17      18      19      20     21      */
-/*      ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-  /*0*/ {1,       2,      1,      1,      1,      ER,    5,  6,     4,      7,      DIV,    MULT,   8,      EQUALTO, 9,      LPAREN, RPAREN, SQUOTE, 10,     GD,     ER,    BU},
+/*      ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+  /*0*/ {1,       2,      1,      1,      1,      ER,    5,  6,     4,      7,      DIV,    MULT,   8,      EQUALTO, 9,      LPAREN, RPAREN, SQUOTE, 10,     GD,     ER,    -IDKEY},
   /*1*/ {1,       1,      1,      1,      1,      1,     1, -IDKEY,-IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY,  -IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY,  IDKEY, -IDKEY},
-  /*2*/ {1,       1,      3,      3,      1,      1,     1, -IDKEY,-IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY,  -IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY,  IDKEY, BU},
-  /*3*/ {1,       1,      1,      3,      LISTOP, 1,     1, -IDKEY,-IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY,  -IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY,  IDKEY, BU},
-  /*4*/ {-PLUS,  -PLUS,  -PLUS,  -PLUS,  -PLUS,  -PLUS,  5,  6,    -PLUS,  -PLUS,  -PLUS,  -PLUS,  -PLUS,  -PLUS,   -PLUS,  -PLUS,  -PLUS,  -PLUS,  -PLUS,  -PLUS,  -PLUS,  BU},
-  /*5*/ {-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,5,  6,    -NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT, -NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,BU},
-  /*6*/ {-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,6, -NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,BU},
-  /*7*/ {-MINUS, -MINUS, -MINUS, -MINUS, -MINUS, -MINUS, 5,  6,    -MINUS, -MINUS, -MINUS, -MINUS, -MINUS, -MINUS,   MINUS, -MINUS, -MINUS, -MINUS, -MINUS, -MINUS, -MINUS, BU},
-  /*8*/ {-GT,    -GT,    -GT,    -GT,    -GT,    -GT,   -GT,-GT,   -GT,    -GT,    -GT,    -GT,    -GT,     GTE,    -GT,    -GT,    -GT,    -GT,    -GT,    -GT,    -GT,    BU},
-  /*9*/ {-LT,    -LT,    -LT,    -LT,    -LT,    -LT,   -LT,-LT,   -LT,    -LT,    -LT,    -LT,    -LT,     LTE,    -LT,    -LT,    -LT,    -LT,    -LT,    -LT,    -GT,    BU},
+  /*2*/ {1,       1,      3,      3,      1,      1,     1, -IDKEY,-IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY,  -IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY,  IDKEY, -IDKEY},
+  /*3*/ {1,       1,      1,      3,      LISTOP, 1,     1, -IDKEY,-IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY,  -IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY,  IDKEY, -IDKEY},
+  /*4*/ {-PLUS,  -PLUS,  -PLUS,  -PLUS,  -PLUS,  -PLUS,  5,  6,    -PLUS,  -PLUS,  -PLUS,  -PLUS,  -PLUS,  -PLUS,   -PLUS,  -PLUS,  -PLUS,  -PLUS,  -PLUS,  -PLUS,  -PLUS,  -PLUS},
+  /*5*/ {-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,5,  6,    -NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT, -NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT},
+  /*6*/ {-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,6, -NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT},
+  /*7*/ {-MINUS, -MINUS, -MINUS, -MINUS, -MINUS, -MINUS, 5,  6,    -MINUS, -MINUS, -MINUS, -MINUS, -MINUS, -MINUS,   MINUS, -MINUS, -MINUS, -MINUS, -MINUS, -MINUS, -MINUS, -MINUS},
+  /*8*/ {-GT,    -GT,    -GT,    -GT,    -GT,    -GT,   -GT,-GT,   -GT,    -GT,    -GT,    -GT,    -GT,     GTE,    -GT,    -GT,    -GT,    -GT,    -GT,    -GT,    -GT,    -GT},
+  /*9*/ {-LT,    -LT,    -LT,    -LT,    -LT,    -LT,   -LT,-LT,   -LT,    -LT,    -LT,    -LT,    -LT,     LTE,    -LT,    -LT,    -LT,    -LT,    -LT,    -LT,    -GT,    -GT},
   /*10*/{10,      10,     10,     10,     10,     10,    10, 10,    10,     10,     10,     10,     10,     10,      10,     10,     10,     10,     STRLIT, 10,     10,    ER}};
  
   // return the transition state value

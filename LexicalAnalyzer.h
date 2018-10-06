@@ -22,12 +22,16 @@ class LexicalAnalyzer
 	string GetLexeme () const;
 	void ReportError (const string & msg);
 
-	// functions I added
-	string parseInput();
+	// functions added
+	int parseInput();
 	string getLine ();
 	int getLineNum ();
 	int nextState (int currentState, char currentChar);
-	string category (int catState);
+	void SetToken(int state);
+	void FindKeywords(int currentState);
+	void FindPredicates();
+	void FindOtherTypes (int currentState);
+
     private:
 	ifstream input;
 	ofstream listingFile;
