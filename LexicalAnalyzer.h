@@ -6,56 +6,46 @@
 
 using namespace std;
 
-enum token_type
-{
-	NONE = -1,
-	EOF_T,
-	NUM_TOKENS
-};
+enum token_type {NONE = -1, IDKEY = 100, NUMLIT, STRLIT, LISTOP, CONS, IF,
+                 COND, ELSE, DISPLAY, NEWLINE, AND, OR, NOT, DEFINE,
+		 NUMBERP, LISTP, ZEROP, NULLP, STRINGP, PLUS, MINUS, DIV,
+		 MULT, MODULO, ROUND, EQUALTO, GT, LT, GTE, LTE, LPAREN,
+                 RPAREN, SQUOTE, BU, GD, ER, EOF_T, NUM_TOKENS};
 
 class LexicalAnalyzer
 {
-  public:
-	LexicalAnalyzer(char *filename);
-	~LexicalAnalyzer();
-	token_type GetToken();
-	string GetTokenName(token_type t) const;
-	string GetLexeme() const;
-	void GetInputFile(char *filename); //Reading in the file for manipulation
-	void ReportError(const string &msg);
+    public:
+	LexicalAnalyzer (char * filename);
+	~LexicalAnalyzer ();
+	token_type GetToken ();
+	string GetTokenName (token_type t) const;
+	string GetLexeme () const;
+	void ReportError (const string & msg);
 
-	//Getters
-	ifstream &getInput() { return input; }
-	ofstream &getListingFile() { return listingFile; }
-	ofstream &getTokenFile() { return tokenFile; }
-	ofstream &getDebugFile() { return debugFile; }
-	//token_type getToken() {return token_type;}
-	string getString() { return line; }
-	int getLinenum() { return linenum; }
-	string getLexeme() { return lexeme; }
-	int getErrors() { return errors; }
+	// functions added
+	int parseInput();
+	string getLine ();
+	int getLineNum ();
+	int nextState (int currentState, char currentChar);
+	void SetToken(int state);
+	void FindKeywords(int currentState);
+	void FindPredicates();
+	void FindOtherTypes (int currentState);
+	bool readNewLine();
 
-	//Setters
-	void setInput(ifstream &_input) { input = _input; }
-	void setListingFile(ofstream &_listingFile) { listingFile = _listingFile; }
-	void setTokenFile(ofstream &_tokenFile) { this->tokenFile = _tokenFile; }
-	void setToken(token_type token) { this->token = token; }
-	void setString(string line) { this->line = line; }
-	void setLinenum(int linenum) { this->linenum = linenum; }
-	void setLexeme(string lexeme) { this->lexeme = lexeme; }
-	void setErrors(int errors) { this->errors = errors; }
-
-  private:
+    private:
 	ifstream input;
 	ofstream listingFile;
 	ofstream tokenFile;
 	ofstream debugFile;
 	token_type token;
 	string line;
-	int linenum;
+	int lineNum;
 	int pos;
 	string lexeme;
 	int errors;
+	bool newLine;
+
 };
 
 #endif

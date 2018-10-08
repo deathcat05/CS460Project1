@@ -12,6 +12,7 @@ int main (int argc, char * argv[])
 		exit (1);
 	}
 	SetLimits ();
+
 	SyntacticalAnalyzer parser (argv[1]);
 
 	return 0;
