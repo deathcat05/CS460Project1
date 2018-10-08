@@ -5,6 +5,6 @@ Written by: Catherine Meyer
 	    Tobi Otepola-Bello
 	    Justin Bernard
 
-What works:
+What works: Most things
 
 What doesn't work:
