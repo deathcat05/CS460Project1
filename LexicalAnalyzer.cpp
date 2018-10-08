@@ -25,6 +25,7 @@ LexicalAnalyzer::LexicalAnalyzer (char * filename): input(filename)
 
   pos = 0; // set pos to 0
   lineNum = 0; // set lineNum to 0
+  newLine = false;
 
 }
 
@@ -40,16 +41,21 @@ token_type LexicalAnalyzer::GetToken ()
 	// This function will find the next lexeme in the input file and return
 	// the token_type value associated with that lexeme
 
+  newLine = false;
+
   /* So, this if condition is to determine whether we do or don't need to grab the
      next line and load it into our line variable.
      First, if the line is empty (which only happens with the very first call to
      GetToken() ) then get the first line and load into line variable.
      After that, the only other times we'll be loading up another line again is when
-     pos becomes >= the length of the line - 1 (in other words, when we've incremented
+     pos becomes >= the length of the line (in other words, when we've incremented
      to the end/read all the tokens in our line). */
   if (line.empty() || pos >= line.length())
     {
       getline (input, line);
+      newLine = true;	    
+      if (input.eof()) // check if EOF, return if so
+	return EOF_T;
       pos = 0; // everytime we get a new line, we need to reset our pos variable to 0
       lineNum++; // also, increment our lineNum variable (which starts at 0 initially)
       cout << lineNum << ": " << line << endl; // output the line number and contents
@@ -271,6 +277,11 @@ string LexicalAnalyzer::getLine ()
 int LexicalAnalyzer::getLineNum()
 {
   return lineNum;
+}
+
+bool LexicalAnalyzer::readNewLine()
+{
+  return newLine;
 }
 
 int LexicalAnalyzer::parseInput ()

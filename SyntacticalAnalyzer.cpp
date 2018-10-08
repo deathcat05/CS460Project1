@@ -10,22 +10,42 @@ SyntacticalAnalyzer::SyntacticalAnalyzer (char * filename)
 {
 	lex = new LexicalAnalyzer (filename);
 	token_type t;
-
-	int count = 0; // temporary...to limit the while loop
+	bool startOfFile = true;
+	ofstream tokenFile, listFile;
+	string tokenFileName, listFileName;
 
 	while ((t = lex->GetToken()) != EOF_T)
 	{
-	  if (count == 55) // limiting to 35 calls of GetToken for now
-	    break;
-		//Create a p1 file & open for input
-		//ofstream p1File;
-		//p1File.open("P1-0.p1");
+	  // set variables to be printed
+	  int lineNum = lex->getLineNum();
+	  string line = lex->getLine();
+	  string lexeme = lex->GetLexeme();
+	  string tokenName = lex->GetTokenName(t);
+	  // get and set the file names for our token and list files
+	  if (startOfFile)
+	    {
+	      for (int i = 0; filename[i] != '.'; i++)
+		{
+		  tokenFileName += filename[i];
+		  listFileName += filename[i];
+		}
+	      tokenFileName += ".p1";
+	      listFileName += ".lst";
 
-		// get a token
-		// write its name to the .p1 file
-		// write the corresponding lexeme to the .p1 file
+	      // open files for writing
+	      tokenFile.open (tokenFileName, ios::app);
+	      listFile.open (listFileName, ios::app);
+	      // print heading of list file
+	      listFile << "Input file: " << filename << endl;
+	      startOfFile = false;
+	    }
+	  // if this is the start of a newly read in line, print the line w/line number
+	  if (lex->readNewLine())
+	    listFile << "   " << lineNum << ": " << line << endl;
+
+	  tokenFile  << left << setw(15) << tokenName << lexeme << endl;
+	  
 	  t = EOF_T;
-	  count++;
 	}
 
 }

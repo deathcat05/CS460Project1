@@ -31,6 +31,7 @@ class LexicalAnalyzer
 	void FindKeywords(int currentState);
 	void FindPredicates();
 	void FindOtherTypes (int currentState);
+	bool readNewLine();
 
     private:
 	ifstream input;
@@ -43,6 +44,7 @@ class LexicalAnalyzer
 	int pos;
 	string lexeme;
 	int errors;
+	bool newLine;
 
 };
 	
