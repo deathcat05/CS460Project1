@@ -72,7 +72,7 @@ token_type LexicalAnalyzer::GetToken ()
   if (lexeme != "" && lexeme != " " && !line.empty())
     {
       SetToken(currentState);
-      cout << '\t' << GetTokenName(token) << endl;
+      cout << '\t' << lexeme << "\t\t" << GetTokenName(token) << endl;
     }
 
   // if we've hit this point and state = STRLIT, we've finished reading in a STRLIT
@@ -199,7 +199,12 @@ void LexicalAnalyzer::FindPredicates ()
   else if ("string?" == lexeme)
     token = STRINGP;
   else
-    token = ER;
+    {
+      token = IDKEY;
+      lexeme.erase(lexeme.length()-1, 1);
+      pos--;
+      SetToken(IDKEY);
+    }
   
 }
 
@@ -337,7 +342,7 @@ int LexicalAnalyzer::parseInput ()
       // check that temp isn't empty or just whitespace, then print
       if (temp != "" && temp != " ")
 	{
-	  cout << '\t' << temp << '\t';//GetTokenName(token) << endl;
+	  //cout << '\t' << temp << '\t';//GetTokenName(token) << endl;
 	  lexeme = temp; // set the vale of lexeme
 	  return state; /// return state value
 	}

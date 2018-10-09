@@ -4,7 +4,7 @@ identifier ident_1 function
 
 cons if cond "new string lit" display newline and or not define
 car cdr cadr cddr ?number
-number?  list?$zero?  null?  string?
+number?  list?$zero?  null? ImNotAPredicate? butTheNextThingIs if? string?
 
 + - / * modulo +.24 +.round
 = > < >= <=
