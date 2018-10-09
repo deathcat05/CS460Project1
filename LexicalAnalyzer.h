@@ -34,6 +34,7 @@ class LexicalAnalyzer
 	bool readNewLine();
 	void printToListingFile(int currentLineNum, string currentLine);
 	void printToTokenFile(string currentLexeme, string currentTokenName);
+	string getErrorString();
 
     private:
 	ifstream input;
@@ -50,6 +51,7 @@ class LexicalAnalyzer
 	// variables added
 	bool newLine; // used for knowing when to print the line to .lst file
 	bool stringLitInProgress; // used when evaluating a STRLIT type
+	string errorString; // holds the error msg
 
 };
 	

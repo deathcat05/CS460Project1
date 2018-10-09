@@ -12,8 +12,6 @@ static string token_names[] = { "IDENT_T","NUMLIT_T","STRLIT_T","LISTOP_T","CONS
                                 "RPAREN_T","SQUOTE_T","ERROR_T","EOF_T" };
 bool testing = false;
 
-// notice the initializer list style used for input...This is how we
-// deal with initializing a private ifstream variable.
 LexicalAnalyzer::LexicalAnalyzer (char * filename): input(filename)
 {
   // check if input file exists
@@ -50,16 +48,16 @@ LexicalAnalyzer::LexicalAnalyzer (char * filename): input(filename)
 
 LexicalAnalyzer::~LexicalAnalyzer ()
 {
-	// This function will complete the execution of the lexical analyzer class
+  // This function will complete the execution of the lexical analyzer class
 
 
 }
 
 token_type LexicalAnalyzer::GetToken ()
 {
-	// This function will find the next lexeme in the input file and return
-	// the token_type value associated with that lexeme
-
+  // This function will find the next lexeme in the input file and return
+  // the token_type value associated with that lexeme
+  errorString = ""; // making sure errorString is empty for start of GetToken
   newLine = false;
 
   /* So, this if condition is to determine whether we do or don't need to grab the
@@ -79,7 +77,6 @@ token_type LexicalAnalyzer::GetToken ()
 	  return EOF_T;
       pos = 0; // everytime we get a new line, we need to reset our pos variable to 0
       lineNum++; // also, increment our lineNum variable (which starts at 0 initially)
-      cout << lineNum << ": " << line << endl; // output the line number and contents
     }
 
   /* Here is where we start parsing the line.  parseInput() will set the value of
@@ -88,10 +85,7 @@ token_type LexicalAnalyzer::GetToken ()
   currentState = parseInput();
   // if the lexeme isn't empty, and, if the line isn't blank, set the token type value
   if (lexeme != "" && lexeme != " " && !line.empty())
-    {
       SetToken(currentState);
-      cout << '\t' << lexeme << "\t\t" << GetTokenName(token) << endl;
-    }
 
   // if we've hit this point and state = STRLIT, we've finished reading in a STRLIT
   // (i.e. we saw a closing double quote), so set stringLitInProgress to false
@@ -104,16 +98,21 @@ token_type LexicalAnalyzer::GetToken ()
       stringLitInProgress = false;
       currentState = ER;
       SetToken(currentState);
-      return ER;
+      //return ER;
     }
-  
+  // error checking, if token is error, then set the errorString value and increment errors
+  if (token == ER)
+    {
+      errorString = "Error at " + to_string(lineNum) + ","  + to_string(pos) + ": Invalid Character Found: " + lexeme;
+      errors++;
+    }
   return token;
 }
 
 string LexicalAnalyzer::GetTokenName (token_type t) const
 {
-	// The GetTokenName function returns a string containing the name of the
-	// token passed to it.
+  // The GetTokenName function returns a string containing the name of the
+  // token passed to it.
 
   if (t == IDKEY || t == -IDKEY)
     return token_names[0];
@@ -306,7 +305,10 @@ string LexicalAnalyzer::GetLexeme () const
 
 void LexicalAnalyzer::printToListingFile (int currentLineNum, string currentLine)
 {
-  listingFile << "   " << currentLineNum << ": " << currentLine << endl;
+  if (currentLineNum == -1)
+    listingFile << errors << " errors found in input file" << endl;
+  else
+    listingFile << "   " << currentLineNum << ": " << currentLine << endl;
 }
 
 void LexicalAnalyzer::printToTokenFile (string currentLexeme, string currentTokenName)
@@ -320,6 +322,12 @@ void LexicalAnalyzer::printToTokenFile (string currentLexeme, string currentToke
 void LexicalAnalyzer::ReportError (const string & msg)
 {
   // This function will be called to write an error message to a file
+  listingFile << msg << endl;
+}
+
+string LexicalAnalyzer::getErrorString()
+{
+  return errorString;
 }
 
 string LexicalAnalyzer::getLine ()
@@ -373,7 +381,6 @@ int LexicalAnalyzer::parseInput ()
       // check that temp isn't empty or just whitespace, then print
       if (temp != "" && temp != " ")
 	{
-	  //cout << '\t' << temp << '\t';//GetTokenName(token) << endl;
 	  lexeme = temp; // set the vale of lexeme
 	  return state; /// return state value
 	}
@@ -471,12 +478,8 @@ int LexicalAnalyzer::nextState (int currentState, char currentChar)
       case '?':
 	charColumn = 20;
 	break;
-	/* removed for now, didn't appear to be useful
-      case '\n':
-	charColumn = 21;
-	break;
-	*/
-      case '\0': // the null terminator however continues to show up from time to time
+
+      case '\0':
 	charColumn = 21;
 	break;
 	
