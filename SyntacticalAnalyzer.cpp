@@ -21,6 +21,9 @@ SyntacticalAnalyzer::SyntacticalAnalyzer(char *filename)
 		string line = lex->getLine();
 		string lexeme = lex->GetLexeme();
 		string tokenName = lex->GetTokenName(t);
+		//string errorToReport = lex->GetError();
+
+
 		// get and set the file names for our token and list files
 		if (startOfFile)
 		{
@@ -35,13 +38,14 @@ SyntacticalAnalyzer::SyntacticalAnalyzer(char *filename)
 			// open files for writing
 			tokenFile.open(tokenFileName, ios::app);
 			listFile.open(listFileName, ios::app);
+
 			// print heading of list file
 			listFile << "Input file: " << filename << endl;
 			startOfFile = false;
 		}
 		// if this is the start of a newly read in line, print the line w/line number
 		if (lex->readNewLine())
-			listFile << "   " << lineNum << ": " << line << endl;
+			listFile << "   " << lineNum << ": " << line << endl; 
 
 		tokenFile << left << setw(15) << tokenName << lexeme << endl;
 
