@@ -457,13 +457,13 @@ int states[12][22] = {
 /*      alpha     c       a       d       r       _      #   .      +       -       /       *       >       =        <       (       )       '       "       ws      ?      \0      */
 /*       0        1       2       3       4       5      6   7      8       9       10      11      12      13       14      15      16      17      18      19      20     21      */
 /*      ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-  /*0*/ {1,       2,      1,      1,      1,      ER,    5,  11,     4,      7,      DIV,    MULT,   8,      EQUALTO, 9,      LPAREN, RPAREN, SQUOTE, 10,     GD,     ER,    -IDKEY},
+  /*0*/ {1,       2,      1,      1,      1,      ER,    5,  6,     4,      7,      DIV,    MULT,   8,      EQUALTO, 9,      LPAREN, RPAREN, SQUOTE, 10,     GD,     ER,    -IDKEY},
   /*1*/ {1,       1,      1,      1,      1,      1,     1, -IDKEY,-IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY,  -IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY,  IDKEY, -IDKEY},
   /*2*/ {1,       1,      3,      3,      1,      1,     1, -IDKEY,-IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY,  -IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY,  IDKEY, -IDKEY},
   /*3*/ {1,       1,      1,      3,      LISTOP, 1,     1, -IDKEY,-IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY,  -IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY,  IDKEY, -IDKEY},
   /*4*/ {-PLUS,  -PLUS,  -PLUS,  -PLUS,  -PLUS,  -PLUS,  5,  6,    -PLUS,  -PLUS,  -PLUS,  -PLUS,  -PLUS,  -PLUS,   -PLUS,  -PLUS,  -PLUS,  -PLUS,  -PLUS,  -PLUS,  -PLUS,  -PLUS},
   /*5*/ {-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,5,  11,   -NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT, -NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT},
-  /*6*/ {-ER,    -ER,    -ER,    -ER,    -ER,    -ER,    11, -ER,  -ER,    -ER,    -ER,    -ER,    -ER,    -ER,     -ER,    -ER,    -ER,    -ER,    -ER,    -NUMLIT,    -ER,    -ER},
+  /*6*/ {-ER,    -ER,    -ER,    -ER,    -ER,    -ER,    11, -ER,  -ER,    -ER,    -ER,    -ER,    -ER,    -ER,     -ER,    -ER,    -ER,    -ER,    -ER,    -ER,    -ER,    -ER},
   /*7*/ {-MINUS, -MINUS, -MINUS, -MINUS, -MINUS, -MINUS, 5,  6,    -MINUS, -MINUS, -MINUS, -MINUS, -MINUS, -MINUS,   MINUS, -MINUS, -MINUS, -MINUS, -MINUS, -MINUS, -MINUS, -MINUS},
   /*8*/ {-GT,    -GT,    -GT,    -GT,    -GT,    -GT,   -GT,-GT,   -GT,    -GT,    -GT,    -GT,    -GT,     GTE,    -GT,    -GT,    -GT,    -GT,    -GT,    -GT,    -GT,    -GT},
   /*9*/ {-LT,    -LT,    -LT,    -LT,    -LT,    -LT,   -LT,-LT,   -LT,    -LT,    -LT,    -LT,    -LT,     LTE,    -LT,    -LT,    -LT,    -LT,    -LT,    -LT,    -GT,    -GT},

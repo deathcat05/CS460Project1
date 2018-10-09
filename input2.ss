@@ -1,5 +1,5 @@
 identifier ident_1 function
-0 123 1.1 -1.1 +1.1 12. -.1
+0 123 1.1 -1.1 +1.112. -.1
 "Hello World"
 
 cons if cond "new string lit" display newline and or not define
