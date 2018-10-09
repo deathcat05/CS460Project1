@@ -1,3 +1,4 @@
+
 P1.out : Project1.o SetLimits.o LexicalAnalyzer.o SyntacticalAnalyzer.o
 	g++ -g -o P1.out Project1.o SetLimits.o LexicalAnalyzer.o SyntacticalAnalyzer.o
 

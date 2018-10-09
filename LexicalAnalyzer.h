@@ -6,34 +6,71 @@
 
 using namespace std;
 
-enum token_type {NONE = -1, IDKEY = 100, NUMLIT, STRLIT, LISTOP, CONS, IF,
-                 COND, ELSE, DISPLAY, NEWLINE, AND, OR, NOT, DEFINE,
-		 NUMBERP, LISTP, ZEROP, NULLP, STRINGP, PLUS, MINUS, DIV,
-		 MULT, MODULO, ROUND, EQUALTO, GT, LT, GTE, LTE, LPAREN,
-                 RPAREN, SQUOTE, BU, GD, ER, EOF_T, NUM_TOKENS};
+enum token_type
+{
+	NONE = -1,
+	IDKEY = 100,
+	NUMLIT,
+	STRLIT,
+	LISTOP,
+	CONS,
+	IF,
+	COND,
+	ELSE,
+	DISPLAY,
+	NEWLINE,
+	AND,
+	OR,
+	NOT,
+	DEFINE,
+	NUMBERP,
+	LISTP,
+	ZEROP,
+	NULLP,
+	STRINGP,
+	PLUS,
+	MINUS,
+	DIV,
+	MULT,
+	MODULO,
+	ROUND,
+	EQUALTO,
+	GT,
+	LT,
+	GTE,
+	LTE,
+	LPAREN,
+	RPAREN,
+	SQUOTE,
+	BU,
+	GD,
+	ER,
+	EOF_T,
+	NUM_TOKENS
+};
 
 class LexicalAnalyzer
 {
-    public:
-	LexicalAnalyzer (char * filename);
-	~LexicalAnalyzer ();
-	token_type GetToken ();
-	string GetTokenName (token_type t) const;
-	string GetLexeme () const;
-	void ReportError (const string & msg);
+  public:
+	LexicalAnalyzer(char *filename);
+	~LexicalAnalyzer();
+	token_type GetToken();
+	string GetTokenName(token_type t) const;
+	string GetLexeme() const;
+	void ReportError(const string &msg);
 
 	// functions added
 	int parseInput();
-	string getLine ();
-	int getLineNum ();
-	int nextState (int currentState, char currentChar);
+	string getLine();
+	int getLineNum();
+	int nextState(int currentState, char currentChar);
 	void SetToken(int state);
 	void FindKeywords(int currentState);
 	void FindPredicates();
-	void FindOtherTypes (int currentState);
+	void FindOtherTypes(int currentState);
 	bool readNewLine();
 
-    private:
+  private:
 	ifstream input;
 	ofstream listingFile;
 	ofstream tokenFile;
@@ -45,7 +82,6 @@ class LexicalAnalyzer
 	string lexeme;
 	int errors;
 	bool newLine;
-
 };
 
 #endif
