@@ -32,6 +32,8 @@ class LexicalAnalyzer
 	void FindPredicates();
 	void FindOtherTypes (int currentState);
 	bool readNewLine();
+	void printToListingFile(int currentLineNum, string currentLine);
+	void printToTokenFile(string currentLexeme, string currentTokenName);
 
     private:
 	ifstream input;
@@ -44,6 +46,7 @@ class LexicalAnalyzer
 	int pos;
 	string lexeme;
 	int errors;
+	
 	// variables added
 	bool newLine; // used for knowing when to print the line to .lst file
 	bool stringLitInProgress; // used when evaluating a STRLIT type

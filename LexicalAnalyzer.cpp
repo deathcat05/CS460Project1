@@ -28,6 +28,24 @@ LexicalAnalyzer::LexicalAnalyzer (char * filename): input(filename)
   newLine = false;
   stringLitInProgress = false;
 
+
+  string tokenFileName, listFileName;
+  // grabbing the filename up to the "." file extension
+  for (int i = 0; filename[i] != '.'; i++)
+    {
+      tokenFileName += filename[i];
+      listFileName += filename[i];
+    }
+  // adding the appropriate file extension to the file names
+  tokenFileName += ".p1";
+  listFileName += ".lst";
+  
+  // open files for writing
+  tokenFile.open (tokenFileName, ios::app);
+  listingFile.open (listFileName, ios::app);
+  // print heading of list file
+  listingFile << "Input file: " << filename << endl;
+
 }
 
 LexicalAnalyzer::~LexicalAnalyzer ()
@@ -284,6 +302,19 @@ string LexicalAnalyzer::GetLexeme () const
   // This function will return the lexeme found by the most recent call to 
   // the get_token function
   return lexeme;
+}
+
+void LexicalAnalyzer::printToListingFile (int currentLineNum, string currentLine)
+{
+  listingFile << "   " << currentLineNum << ": " << currentLine << endl;
+}
+
+void LexicalAnalyzer::printToTokenFile (string currentLexeme, string currentTokenName)
+{
+  if (currentTokenName == "EOF_T")
+    tokenFile << '\t' << "EOF_T" << endl;
+  else
+    tokenFile  << '\t' << left << setw(16) << currentTokenName << currentLexeme << endl;  
 }
 
 void LexicalAnalyzer::ReportError (const string & msg)
