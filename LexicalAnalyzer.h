@@ -44,7 +44,9 @@ class LexicalAnalyzer
 	int pos;
 	string lexeme;
 	int errors;
-	bool newLine;
+	// variables added
+	bool newLine; // used for knowing when to print the line to .lst file
+	bool stringLitInProgress; // used when evaluating a STRLIT type
 
 };
 	

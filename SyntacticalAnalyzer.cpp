@@ -43,7 +43,7 @@ SyntacticalAnalyzer::SyntacticalAnalyzer (char * filename)
 	  if (lex->readNewLine())
 	    listFile << "   " << lineNum << ": " << line << endl;
 
-	  tokenFile  << left << setw(15) << tokenName << lexeme << endl;
+	  tokenFile  << '\t' << left << setw(16) << tokenName << lexeme << endl;
 	  
 	  t = EOF_T;
 	}

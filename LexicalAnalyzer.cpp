@@ -26,6 +26,7 @@ LexicalAnalyzer::LexicalAnalyzer (char * filename): input(filename)
   pos = 0; // set pos to 0
   lineNum = 0; // set lineNum to 0
   newLine = false;
+  stringLitInProgress = false;
 
 }
 
@@ -70,6 +71,16 @@ token_type LexicalAnalyzer::GetToken ()
     {
       SetToken(currentState);
       cout << '\t' << GetTokenName(token) << endl;
+    }
+
+  // for a STRLIT that hasn't found a closing double-quote, we'll hit this point where
+  // stringLitInProgress will be true and return an ERROR token
+  if (stringLitInProgress)
+    {
+      stringLitInProgress = false;
+      currentState = ER;
+      SetToken(currentState);
+      return ER;
     }
   
   return token;
@@ -229,7 +240,7 @@ void LexicalAnalyzer::FindOtherTypes(int state)
     token = NUMLIT;
   else if (state == STRLIT || state == -STRLIT)
     token = STRLIT;
-  else if (lexeme == "$" || lexeme == "?")
+  else if (state == ER || state == -ER || lexeme == "$" || lexeme == "?")
     token = ER;
   else if (state == PLUS || state == -PLUS)
     token = PLUS;
@@ -408,6 +419,7 @@ int LexicalAnalyzer::nextState (int currentState, char currentChar)
 	
       case '"':
 	charColumn = 18;
+	stringLitInProgress = true;
 	break;
 	
       case ' ':
@@ -430,21 +442,22 @@ int LexicalAnalyzer::nextState (int currentState, char currentChar)
 	return ER;
       }
 
-int states[11][22] = {
+int states[12][22] = {
 /*      alpha     c       a       d       r       _      #   .      +       -       /       *       >       =        <       (       )       '       "       ws      ?      \0      */
 /*       0        1       2       3       4       5      6   7      8       9       10      11      12      13       14      15      16      17      18      19      20     21      */
 /*      ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-  /*0*/ {1,       2,      1,      1,      1,      ER,    5,  6,     4,      7,      DIV,    MULT,   8,      EQUALTO, 9,      LPAREN, RPAREN, SQUOTE, 10,     GD,     ER,    -IDKEY},
+  /*0*/ {1,       2,      1,      1,      1,      ER,    5,  11,     4,      7,      DIV,    MULT,   8,      EQUALTO, 9,      LPAREN, RPAREN, SQUOTE, 10,     GD,     ER,    -IDKEY},
   /*1*/ {1,       1,      1,      1,      1,      1,     1, -IDKEY,-IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY,  -IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY,  IDKEY, -IDKEY},
   /*2*/ {1,       1,      3,      3,      1,      1,     1, -IDKEY,-IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY,  -IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY,  IDKEY, -IDKEY},
   /*3*/ {1,       1,      1,      3,      LISTOP, 1,     1, -IDKEY,-IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY,  -IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY, -IDKEY,  IDKEY, -IDKEY},
   /*4*/ {-PLUS,  -PLUS,  -PLUS,  -PLUS,  -PLUS,  -PLUS,  5,  6,    -PLUS,  -PLUS,  -PLUS,  -PLUS,  -PLUS,  -PLUS,   -PLUS,  -PLUS,  -PLUS,  -PLUS,  -PLUS,  -PLUS,  -PLUS,  -PLUS},
-  /*5*/ {-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,5,  6,    -NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT, -NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT},
-  /*6*/ {-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,6, -NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT},
+  /*5*/ {-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,5,  11,   -NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT, -NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT},
+  /*6*/ {-ER,    -ER,    -ER,    -ER,    -ER,    -ER,    11, -ER,  -ER,    -ER,    -ER,    -ER,    -ER,    -ER,     -ER,    -ER,    -ER,    -ER,    -ER,    -NUMLIT,    -ER,    -ER},
   /*7*/ {-MINUS, -MINUS, -MINUS, -MINUS, -MINUS, -MINUS, 5,  6,    -MINUS, -MINUS, -MINUS, -MINUS, -MINUS, -MINUS,   MINUS, -MINUS, -MINUS, -MINUS, -MINUS, -MINUS, -MINUS, -MINUS},
   /*8*/ {-GT,    -GT,    -GT,    -GT,    -GT,    -GT,   -GT,-GT,   -GT,    -GT,    -GT,    -GT,    -GT,     GTE,    -GT,    -GT,    -GT,    -GT,    -GT,    -GT,    -GT,    -GT},
   /*9*/ {-LT,    -LT,    -LT,    -LT,    -LT,    -LT,   -LT,-LT,   -LT,    -LT,    -LT,    -LT,    -LT,     LTE,    -LT,    -LT,    -LT,    -LT,    -LT,    -LT,    -GT,    -GT},
-  /*10*/{10,      10,     10,     10,     10,     10,    10, 10,    10,     10,     10,     10,     10,     10,      10,     10,     10,     10,     STRLIT, 10,     10,    ER}};
+  /*10*/{10,      10,     10,     10,     10,     10,    10, 10,    10,     10,     10,     10,     10,     10,      10,     10,     10,     10,     STRLIT, 10,     10,    ER},
+  /*11*/{-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,11,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT}};
  
   // return the transition state value
   return states[currentState][charColumn];
