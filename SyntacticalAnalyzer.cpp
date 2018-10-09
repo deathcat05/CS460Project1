@@ -42,11 +42,11 @@ SyntacticalAnalyzer::SyntacticalAnalyzer (char * filename)
 	  // if this is the start of a newly read in line, print the line w/line number
 	  if (lex->readNewLine())
 	    listFile << "   " << lineNum << ": " << line << endl;
-
-	  tokenFile  << '\t' << left << setw(16) << tokenName << lexeme << endl;
-	  
+	  if (t != NONE)
+	    tokenFile  << '\t' << left << setw(16) << tokenName << lexeme << endl;
 	  t = EOF_T;
 	}
+	tokenFile << '\t' << "EOF_T" << endl;
 
 }
 

@@ -53,10 +53,12 @@ token_type LexicalAnalyzer::GetToken ()
      to the end/read all the tokens in our line). */
   if (line.empty() || pos >= line.length())
     {
+      lexeme = "";
+      token = NONE;
       getline (input, line);
       newLine = true;	    
       if (input.eof()) // check if EOF, return if so
-	return EOF_T;
+	  return EOF_T;
       pos = 0; // everytime we get a new line, we need to reset our pos variable to 0
       lineNum++; // also, increment our lineNum variable (which starts at 0 initially)
       cout << lineNum << ": " << line << endl; // output the line number and contents
@@ -73,6 +75,10 @@ token_type LexicalAnalyzer::GetToken ()
       cout << '\t' << GetTokenName(token) << endl;
     }
 
+  // if we've hit this point and state = STRLIT, we've finished reading in a STRLIT
+  // (i.e. we saw a closing double quote), so set stringLitInProgress to false
+  if (currentState == STRLIT)
+    stringLitInProgress = false;
   // for a STRLIT that hasn't found a closing double-quote, we'll hit this point where
   // stringLitInProgress will be true and return an ERROR token
   if (stringLitInProgress)
