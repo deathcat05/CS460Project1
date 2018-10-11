@@ -3,7 +3,7 @@ identifier ident_1 function
 "Hello World"
 
 cons if cond "new string lit" display newline and or not define
-car cdr cadr cddr ?number
+car cdr cartalk cadr cddr ?number cartalk? cdrtalk
 number?  list?$zero?  null? ImNotAPredicate? butTheNextThingIs if? string?
 
 + - / * modulo +.24 +.round

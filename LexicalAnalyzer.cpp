@@ -487,7 +487,7 @@ int LexicalAnalyzer::nextState (int currentState, char currentChar)
 	return ER;
       }
 
-int states[12][22] = {
+int states[13][22] = {
 /*      alpha     c       a       d       r       _      #   .      +       -       /       *       >       =        <       (       )       '       "       ws      ?      \0      */
 /*       0        1       2       3       4       5      6   7      8       9       10      11      12      13       14      15      16      17      18      19      20     21      */
 /*      ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -502,7 +502,8 @@ int states[12][22] = {
   /*8*/ {-GT,    -GT,    -GT,    -GT,    -GT,    -GT,   -GT,-GT,   -GT,    -GT,    -GT,    -GT,    -GT,     GTE,    -GT,    -GT,    -GT,    -GT,    -GT,    -GT,    -GT,    -GT},
   /*9*/ {-LT,    -LT,    -LT,    -LT,    -LT,    -LT,   -LT,-LT,   -LT,    -LT,    -LT,    -LT,    -LT,     LTE,    -LT,    -LT,    -LT,    -LT,    -LT,    -LT,    -GT,    -GT},
   /*10*/{10,      10,     10,     10,     10,     10,    10, 10,    10,     10,     10,     10,     10,     10,      10,     10,     10,     10,     STRLIT, 10,     10,    ER},
-  /*11*/{-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,11,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT}};
+  /*11*/{-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,11,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT,-NUMLIT},
+  /*12*/{1,       1,      1,      1,      1,      1,     1, -LISTOP,-LISTOP,-LISTOP,-LISTOP,-LISTOP,-LISTOP,-LISTOP,-LISTOP,-LISTOP,-LISTOP,-LISTOP,-LISTOP,-LISTOP,-LISTOP,-LISTOP}};
  
   // return the transition state value
   return states[currentState][charColumn];
